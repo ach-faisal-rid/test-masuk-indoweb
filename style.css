@@ -5,47 +5,59 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-}
-
-.container {
+    flex-direction: column;
+  }
+  
+  .container {
     width: 100%;
     max-width: 600px;
-}
-
-.report-section {
+  }
+  
+  .report-section {
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #f9f9f9;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.report-section h2 {
+  }
+  
+  .report-section h2 {
     margin-top: 0;
     margin-bottom: 20px;
-}
-
-input[type="text"] {
+  }
+  
+  input[type="text"] {
     margin-right: 10px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-}
-
-button {
+  }
+  
+  button {
     margin-right: 10px;
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-button#tampilkan {
+  }
+  
+  button#tampilkan {
     background-color: #007bff;
     color: white;
-}
-
-button#downloadDatabase {
+  }
+  
+  button#downloadDatabase {
     background-color: #28a745;
     color: white;
-}
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f0f0f0;
+  }
+  

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laporan Penjualan</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Laporan Penjualan</h2>
+
+<label for="yearSelect">Pilih Tahun:</label>
+<select id="yearSelect">
+    <option value="2023">2023</option>
+    <option value="2022">2022</option>
+    <option value="2021">2021</option>
+    <!-- Tambahkan tahun lainnya jika diperlukan -->
+</select>
+<button onclick="displayReport()">Tampilkan</button>
+<button onclick="downloadReport()">Download</button>
+
+<h3>Data Penjualan Bulanan</h3>
+<table id="salesTable">
+    <tr>
+        <th>Bulan</th>
+        <th>Total</th>
+        <th>Makanan</th>
+        <th>Minuman</th>
+        <th>Semua Total</th>
+    </tr>
+    <!-- Data penjualan akan ditambahkan di sini secara dinamis -->
+</table>
+
+<script>
+    function displayReport() {
+        var year = document.getElementById("yearSelect").value;
+        // Ambil data dari server atau sumber data lainnya berdasarkan tahun yang dipilih
+        // Untuk contoh ini, kita menggunakan data statis
+
+        var salesData = {
+            "2023": [
+                { month: "Januari", total: 1000, makanan: 600, minuman: 400, semuaTotal: 1000 },
+                { month: "Februari", total: 1100, makanan: 700, minuman: 400, semuaTotal: 1100 },
+                // Tambahkan data bulan lainnya untuk tahun 2023
+            ],
+            "2022": [
+                { month: "Januari", total: 900, makanan: 500, minuman: 400, semuaTotal: 900 },
+                { month: "Februari", total: 950, makanan: 550, minuman: 400, semuaTotal: 950 },
+                // Tambahkan data bulan lainnya untuk tahun 2022
+            ],
+            "2021" : [
+            { month: "Januari", total: 1102, makanan: 897, minuman: 567, semuaTotal: 541 },
+            { month: "Februari", total: 4561, makanan: 871, minuman: 411, semuaTotal: 871 },
+            ]
+        };
+
+        var table = document.getElementById("salesTable");
+        table.innerHTML = `
+            <tr>
+                <th>Bulan</th>
+                <th>Total</th>
+                <th>Makanan</th>
+                <th>Minuman</th>
+                <th>Semua Total</th>
+            </tr>
+        `;
+
+        var data = salesData[year];
+        if (data) {
+            data.forEach(function(row) {
+                var newRow = table.insertRow();
+                newRow.insertCell(0).innerText = row.month;
+                newRow.insertCell(1).innerText = row.total;
+                newRow.insertCell(2).innerText = row.makanan;
+                newRow.insertCell(3).innerText = row.minuman;
+                newRow.insertCell(4).innerText = row.semuaTotal;
+            });
+        }
+    }
+
+    function downloadReport() {
+        // Fungsi untuk mengunduh laporan dalam format CSV
+        var year = document.getElementById("yearSelect").value;
+        var table = document.getElementById("salesTable");
+        var rows = table.querySelectorAll("tr");
+
+        var csvContent = "";
+        rows.forEach(function(row) {
+            var cols = row.querySelectorAll("th, td");
+            var rowData = [];
+            cols.forEach(function(col) {
+                rowData.push(col.innerText);
+            });
+            csvContent += rowData.join(",") + "\n";
+        });
+
+        var blob = new Blob([csvContent], { type: 'text/csv' });
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.setAttribute("hidden", "");
+        a.setAttribute("href", url);
+        a.setAttribute("download", "laporan_penjualan_" + year + ".csv");
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
+
+</body>
+</html>
