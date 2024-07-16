@@ -17,6 +17,7 @@ if ($conn->connect_error) {
 // }
 
 $year = isset($_GET['year']) ? (int)$_GET['year'] : 0;
+$category = isset($_GET['category']) ? $_GET['category'] : 'all';
 
 if ($year > 0) {
     $sql = "
@@ -43,12 +44,20 @@ if ($year > 0) {
             m_menu ON t_pesanan_detail.m_menu_id = m_menu.id
         WHERE 
             YEAR(t_pesanan.tanggal) = ?
-        GROUP BY 
-            m_menu.id
     ";
 
+    if ($category !== 'all') {
+        $sql .= " AND m_menu.kategori = ?";
+    }
+
+    $sql .= " GROUP BY m_menu.id";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $year);
+    if ($category !== 'all') {
+        $stmt->bind_param("is", $year, $category);
+    } else {
+        $stmt->bind_param("i", $year);
+    }
     $stmt->execute();
     $result = $stmt->get_result();
 

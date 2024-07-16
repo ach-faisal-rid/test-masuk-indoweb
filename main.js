@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const selectElement = document.querySelector('#year-select');
+  const yearSelectElement = document.querySelector('#year-select');
+  const categorySelectElement = document.querySelector('#category-select');
   const tableBody = document.querySelector('tbody');
   const reportYear = document.querySelector('#report-year');
 
-  function fetchSalesData(year) {
-      fetch(`db.php?year=${year}`)
+  function fetchSalesData(year, category) {
+      fetch(`db.php?year=${year}&category=${category}`)
           .then(response => response.json())
           .then(data => {
               tableBody.innerHTML = ''; // Clear existing rows
@@ -48,12 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
           });
   }
 
-  selectElement.addEventListener('change', function () {
-      const year = this.value;
+  function updateReport() {
+      const year = yearSelectElement.value;
+      const category = categorySelectElement.value;
       reportYear.textContent = year;
-      fetchSalesData(year);
-  });
+      fetchSalesData(year, category);
+  }
 
-  // Fetch initial data for the default year (2019)
-  fetchSalesData(selectElement.value);
+  yearSelectElement.addEventListener('change', updateReport);
+  categorySelectElement.addEventListener('change', updateReport);
+
+  // Fetch initial data for the default year and category
+  updateReport();
 });
