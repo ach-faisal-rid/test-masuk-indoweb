@@ -10,7 +10,7 @@
     <div class="container">
         <h1>Laporan Penjualan Tahunan</h1>
         <div class="controls">
-            <select>
+            <select id="year-select">
                 <option value="2019">2019</option>
                 <option value="2020">2020</option>
                 <option value="2021">2021</option>
@@ -25,7 +25,7 @@
                 <thead>
                     <tr>
                         <th colspan="14" style="text-align:center;">
-                            Laporan Penjualan Periode 2019
+                            Laporan Penjualan Periode <span id="report-year">2019</span>
                         </th>
                     </tr>
                     <tr>
@@ -46,65 +46,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th colspan="14" class="section">Makanan</th>
-                    </tr>
-                    <tr>
-                        <td>Nasi Goreng</td>
-                        <td>130,000</td>
-                        <td>170,000</td>
-                        <td>50,000</td>
-                        <td>100,000</td>
-                        <td>0</td>
-                        <td>65,000</td>
-                        <td>10,000</td>
-                        <td>10,000</td>
-                        <td>50,000</td>
-                        <td>10,000</td>
-                        <td>40,000</td>
-                        <td>30,000</td>
-                        <td>665,000</td>
-                    </tr>
-                    <!-- More rows as needed -->
-                    <tr>
-                        <th colspan="14" class="section">Minuman</th>
-                    </tr>
-                    <tr>
-                        <td>Teh Hijau</td>
-                        <td>60,000</td>
-                        <td>70,000</td>
-                        <td>90,000</td>
-                        <td>190,000</td>
-                        <td>10,000</td>
-                        <td>150,000</td>
-                        <td>40,000</td>
-                        <td>10,000</td>
-                        <td>40,000</td>
-                        <td>0</td>
-                        <td>20,000</td>
-                        <td>30,000</td>
-                        <td>710,000</td>
-                    </tr>
-                    <!-- More rows as needed -->
-                    <tr class="total-row">
-                        <td>Grand Total</td>
-                        <td>469,000</td>
-                        <td>605,000</td>
-                        <td>350,000</td>
-                        <td>604,000</td>
-                        <td>257,000</td>
-                        <td>464,000</td>
-                        <td>228,000</td>
-                        <td>303,000</td>
-                        <td>229,000</td>
-                        <td>169,000</td>
-                        <td>157,000</td>
-                        <td>130,000</td>
-                        <td>3,965,000</td>
-                    </tr>
+                    <!-- Data will be dynamically inserted here -->
                 </tbody>
             </table>
         </div>
     </div>
+    <script src="main.js"></script>
 </body>
 </html>
