@@ -17,8 +17,8 @@ $year = isset($_GET['year']) ? (int)$_GET['year'] : 0;
 if ($year > 0) {
     $sql = "
         SELECT 
-            m_menu.nama AS menu,
-            m_menu.kategori AS category,
+            m_menu.nama AS name,
+            m_menu.kategori AS type,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 1 THEN t_pesanan_detail.total ELSE 0 END) AS Jan,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 2 THEN t_pesanan_detail.total ELSE 0 END) AS Feb,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 3 THEN t_pesanan_detail.total ELSE 0 END) AS Mar,
@@ -53,10 +53,18 @@ if ($year > 0) {
 
     $output = fopen('php://output', 'w');
 
-    fputcsv($output, array('Menu', 'Category', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des', 'Total'));
+    fputcsv($output, array('Category', 'Menu', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des', 'Total'));
 
+    $currentCategory = '';
     while ($row = $result->fetch_assoc()) {
-        fputcsv($output, $row);
+        if ($row['type'] !== $currentCategory) {
+            if ($currentCategory !== '') {
+                fputcsv($output, array()); // Kosongkan baris untuk pemisah antar kategori
+            }
+            fputcsv($output, array($row['type'])); // Tulis kategori sebagai baris terpisah
+            $currentCategory = $row['type'];
+        }
+        fputcsv($output, array($row['type'], $row['name'], $row['Jan'], $row['Feb'], $row['Mar'], $row['Apr'], $row['Mei'], $row['Jun'], $row['Jul'], $row['Ags'], $row['Sep'], $row['Okt'], $row['Nov'], $row['Des'], $row['Total']));
     }
 
     fclose($output);

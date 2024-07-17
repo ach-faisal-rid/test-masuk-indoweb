@@ -1,10 +1,25 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const btnTampil = document.querySelector('.show-btn');
+    if (btnTampil) {
+        btnTampil.addEventListener('click', () => updateReport());
+    } else {
+        console.error('Button with id "show-btn" not found.');
+    }
+    const btnDownload = document.querySelector('.download-btn')
+    if (btnDownload) {
+        btnDownload.addEventListener('click', () => downloadData());
+    } else {
+        console.error('Button with id "download-btn" not found.');
+    }
+
     const yearSelectElement = document.querySelector('#year-select');
-    const downloadBtn = document.querySelector('#download-btn');
     const tableBody = document.querySelector('tbody');
     const reportYear = document.querySelector('#report-year');
 
     function fetchSalesData(year) {
+        if (!year) {
+            return;
+        }
         fetch(`http://localhost/smkti/test_masuk_indoweb/db2.php?year=${year}`)
             .then(response => response.json())
             .then(data => {
@@ -12,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.error) {
                     console.error('Error fetching sales data:', data.error);
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td colspan="15">Error fetching data: ${data.error}</td>`;
+                    tr.innerHTML = `<td colspan="14">Error fetching data: ${data.error}</td>`;
                     tableBody.appendChild(tr);
                 } else if (data.length > 0) {
                     let grandTotal = {
@@ -31,70 +46,97 @@ document.addEventListener('DOMContentLoaded', function () {
                         Total: 0
                     };
 
-                    // Group data by category
-                    let groupedData = {
-                        Makanan: [],
-                        Minuman: []
-                    };
+                    const dataMakanan = data.filter(item => item.type === 'makanan');
+                    const dataMinuman = data.filter(item => item.type === 'minuman');
 
-                    data.forEach(row => {
-                        grandTotal.Jan += parseInt(row.Jan);
-                        grandTotal.Feb += parseInt(row.Feb);
-                        grandTotal.Mar += parseInt(row.Mar);
-                        grandTotal.Apr += parseInt(row.Apr);
-                        grandTotal.Mei += parseInt(row.Mei);
-                        grandTotal.Jun += parseInt(row.Jun);
-                        grandTotal.Jul += parseInt(row.Jul);
-                        grandTotal.Ags += parseInt(row.Ags);
-                        grandTotal.Sep += parseInt(row.Sep);
-                        grandTotal.Okt += parseInt(row.Okt);
-                        grandTotal.Nov += parseInt(row.Nov);
-                        grandTotal.Des += parseInt(row.Des);
-                        grandTotal.Total += parseInt(row.Total);
+                    let trMakanan = document.createElement('tr');
+                    trMakanan.innerHTML = `<td colspan="14" style="background: #cccccc">Makanan</td>`;
+                    tableBody.appendChild(trMakanan);
 
-                        if (row.category === 'Makanan') {
-                            groupedData.Makanan.push(row);
-                        } else if (row.category === 'Minuman') {
-                            groupedData.Minuman.push(row);
-                        }
-                    });
+                    if (dataMakanan.length === 0) {
+                        let trMakananEmpty = document.createElement('tr');
+                        trMakananEmpty.innerHTML = `<td colspan="14" style="background: #fcd6d6">Data Kosong</td>`;
+                        tableBody.appendChild(trMakananEmpty);
+                    } else {
+                        dataMakanan.forEach(row => {
+                            grandTotal.Jan += parseInt(row.jan);
+                            grandTotal.Feb += parseInt(row.feb);
+                            grandTotal.Mar += parseInt(row.mar);
+                            grandTotal.Apr += parseInt(row.apr);
+                            grandTotal.Mei += parseInt(row.mei);
+                            grandTotal.Jun += parseInt(row.jun);
+                            grandTotal.Jul += parseInt(row.jul);
+                            grandTotal.Ags += parseInt(row.ags);
+                            grandTotal.Sep += parseInt(row.sep);
+                            grandTotal.Okt += parseInt(row.okt);
+                            grandTotal.Nov += parseInt(row.nop);
+                            grandTotal.Des += parseInt(row.des);
+                            grandTotal.Total += parseInt(row.total);
 
-                    // Function to create rows for a category
-                    function createCategoryRows(category, rows) {
-                        let categoryHTML = `
-                            <tr class="category-header">
-                                <td colspan="14">${category}</td>
-                            </tr>
-                        `;
-                        rows.forEach(row => {
-                            categoryHTML += `
-                                <tr>
-                                    <td>${row.menu}</td>
-                                    <td>${parseInt(row.Jan).toLocaleString()}</td>
-                                    <td>${parseInt(row.Feb).toLocaleString()}</td>
-                                    <td>${parseInt(row.Mar).toLocaleString()}</td>
-                                    <td>${parseInt(row.Apr).toLocaleString()}</td>
-                                    <td>${parseInt(row.Mei).toLocaleString()}</td>
-                                    <td>${parseInt(row.Jun).toLocaleString()}</td>
-                                    <td>${parseInt(row.Jul).toLocaleString()}</td>
-                                    <td>${parseInt(row.Ags).toLocaleString()}</td>
-                                    <td>${parseInt(row.Sep).toLocaleString()}</td>
-                                    <td>${parseInt(row.Okt).toLocaleString()}</td>
-                                    <td>${parseInt(row.Nov).toLocaleString()}</td>
-                                    <td>${parseInt(row.Des).toLocaleString()}</td>
-                                    <td>${parseInt(row.Total).toLocaleString()}</td>
-                                </tr>
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${row.name}</td>
+                                <td>${parseInt(row.jan).toLocaleString()}</td>
+                                <td>${parseInt(row.feb).toLocaleString()}</td>
+                                <td>${parseInt(row.mar).toLocaleString()}</td>
+                                <td>${parseInt(row.apr).toLocaleString()}</td>
+                                <td>${parseInt(row.mei).toLocaleString()}</td>
+                                <td>${parseInt(row.jun).toLocaleString()}</td>
+                                <td>${parseInt(row.jul).toLocaleString()}</td>
+                                <td>${parseInt(row.ags).toLocaleString()}</td>
+                                <td>${parseInt(row.sep).toLocaleString()}</td>
+                                <td>${parseInt(row.okt).toLocaleString()}</td>
+                                <td>${parseInt(row.nop).toLocaleString()}</td>
+                                <td>${parseInt(row.des).toLocaleString()}</td>
+                                <td>${parseInt(row.total).toLocaleString()}</td>
                             `;
+                            tableBody.appendChild(tr);
                         });
-                        return categoryHTML;
                     }
 
-                    // Add rows for Makanan and Minuman categories
-                    if (groupedData.Makanan.length > 0) {
-                        tableBody.innerHTML += createCategoryRows('Makanan', groupedData.Makanan);
-                    }
-                    if (groupedData.Minuman.length > 0) {
-                        tableBody.innerHTML += createCategoryRows('Minuman', groupedData.Minuman);
+                    let trMinuman = document.createElement('tr');
+                    trMinuman.innerHTML = `<td colspan="14" style="background: #cccccc">Minuman</td>`;
+                    tableBody.appendChild(trMinuman);
+
+                    if (dataMinuman.length === 0) {
+                        let trMinumanEmpty = document.createElement('tr');
+                        trMinumanEmpty.innerHTML = `<td colspan="14" style="background: #fcd6d6">Data Kosong</td>`;
+                        tableBody.appendChild(trMinumanEmpty);
+                    } else {
+                        dataMinuman.forEach(row => {
+                            grandTotal.Jan += parseInt(row.jan);
+                            grandTotal.Feb += parseInt(row.feb);
+                            grandTotal.Mar += parseInt(row.mar);
+                            grandTotal.Apr += parseInt(row.apr);
+                            grandTotal.Mei += parseInt(row.mei);
+                            grandTotal.Jun += parseInt(row.jun);
+                            grandTotal.Jul += parseInt(row.jul);
+                            grandTotal.Ags += parseInt(row.ags);
+                            grandTotal.Sep += parseInt(row.sep);
+                            grandTotal.Okt += parseInt(row.okt);
+                            grandTotal.Nov += parseInt(row.nop);
+                            grandTotal.Des += parseInt(row.des);
+                            grandTotal.Total += parseInt(row.total);
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${row.name}</td>
+                                <td>${parseInt(row.jan).toLocaleString()}</td>
+                                <td>${parseInt(row.feb).toLocaleString()}</td>
+                                <td>${parseInt(row.mar).toLocaleString()}</td>
+                                <td>${parseInt(row.apr).toLocaleString()}</td>
+                                <td>${parseInt(row.mei).toLocaleString()}</td>
+                                <td>${parseInt(row.jun).toLocaleString()}</td>
+                                <td>${parseInt(row.jul).toLocaleString()}</td>
+                                <td>${parseInt(row.ags).toLocaleString()}</td>
+                                <td>${parseInt(row.sep).toLocaleString()}</td>
+                                <td>${parseInt(row.okt).toLocaleString()}</td>
+                                <td>${parseInt(row.nop).toLocaleString()}</td>
+                                <td>${parseInt(row.des).toLocaleString()}</td>
+                                <td>${parseInt(row.total).toLocaleString()}</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
                     }
 
                     // Add Grand Total row
@@ -119,14 +161,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     tableBody.appendChild(trTotal);
                 } else {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td colspan="15">No data available for ${year}</td>`;
+                    tr.innerHTML = `<td colspan="14">No data available for ${year}</td>`;
                     tableBody.appendChild(tr);
                 }
             })
             .catch(error => {
                 console.error('Error fetching sales data:', error);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="15">Error fetching data: ${error}</td>`;
+                tr.innerHTML = `<td colspan="14">Error fetching data: ${error}</td>`;
                 tableBody.appendChild(tr);
             });
     }
@@ -141,10 +183,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const year = yearSelectElement.value;
         window.location.href = `http://localhost/smkti/test_masuk_indoweb/export2.php?year=${year}`;
     }
-
-    yearSelectElement.addEventListener('change', updateReport);
-    downloadBtn.addEventListener('click', downloadData);
-
-    // Fetch initial data for the default year
-    updateReport();
 });
