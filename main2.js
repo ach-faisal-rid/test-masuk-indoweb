@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.error) {
                     console.error('Error fetching sales data:', data.error);
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td colspan="14">Error fetching data: ${data.error}</td>`;
+                    tr.innerHTML = `<td colspan="15">Error fetching data: ${data.error}</td>`;
                     tableBody.appendChild(tr);
                 } else if (data.length > 0) {
                     let grandTotal = {
@@ -30,10 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         Des: 0,
                         Total: 0
                     };
-
-                    // Variables to separate food and drinks
-                    let foodRows = '';
-                    let drinkRows = '';
 
                     data.forEach(row => {
                         grandTotal.Jan += parseInt(row.Jan);
@@ -53,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const rowHTML = `
                             <tr>
                                 <td>${row.menu}</td>
+                                <td>${row.category}</td>
                                 <td>${parseInt(row.Jan).toLocaleString()}</td>
                                 <td>${parseInt(row.Feb).toLocaleString()}</td>
                                 <td>${parseInt(row.Mar).toLocaleString()}</td>
@@ -69,36 +66,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             </tr>
                         `;
 
-                        if (row.category === 'Food') {
-                            foodRows += rowHTML;
-                        } else if (row.category === 'Drink') {
-                            drinkRows += rowHTML;
-                        }
+                        tableBody.innerHTML += rowHTML;
                     });
-
-                    // Insert rows into the table with category headers
-                    if (foodRows) {
-                        tableBody.innerHTML += `
-                            <tr class="category-header">
-                                <td colspan="14">Food</td>
-                            </tr>
-                            ${foodRows}
-                        `;
-                    }
-                    if (drinkRows) {
-                        tableBody.innerHTML += `
-                            <tr class="category-header">
-                                <td colspan="14">Drink</td>
-                            </tr>
-                            ${drinkRows}
-                        `;
-                    }
 
                     // Add Grand Total row
                     const trTotal = document.createElement('tr');
                     trTotal.classList.add('total-row');
                     trTotal.innerHTML = `
                         <td>Grand Total</td>
+                        <td></td> <!-- Empty category column -->
                         <td>${grandTotal.Jan.toLocaleString()}</td>
                         <td>${grandTotal.Feb.toLocaleString()}</td>
                         <td>${grandTotal.Mar.toLocaleString()}</td>
@@ -116,14 +92,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     tableBody.appendChild(trTotal);
                 } else {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td colspan="14">No data available for ${year}</td>`;
+                    tr.innerHTML = `<td colspan="15">No data available for ${year}</td>`;
                     tableBody.appendChild(tr);
                 }
             })
             .catch(error => {
                 console.error('Error fetching sales data:', error);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="14">Error fetching data: ${error}</td>`;
+                tr.innerHTML = `<td colspan="15">Error fetching data: ${error}</td>`;
                 tableBody.appendChild(tr);
             });
     }
@@ -139,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = `http://localhost/smkti/test_masuk_indoweb/export2.php?year=${year}`;
     }
 
-    yearSelectElement.addEventListener('click', updateReport);
+    yearSelectElement.addEventListener('change', updateReport);
     downloadBtn.addEventListener('click', downloadData);
 
     // Fetch initial data for the default year

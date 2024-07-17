@@ -18,6 +18,7 @@ if ($year > 0) {
     $sql = "
         SELECT 
             m_menu.nama AS menu,
+            m_menu.kategori AS category,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 1 THEN t_pesanan_detail.total ELSE 0 END) AS Jan,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 2 THEN t_pesanan_detail.total ELSE 0 END) AS Feb,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 3 THEN t_pesanan_detail.total ELSE 0 END) AS Mar,
@@ -40,7 +41,7 @@ if ($year > 0) {
         WHERE 
             YEAR(t_pesanan.tanggal) = ?
         GROUP BY 
-            m_menu.id";
+            m_menu.id, m_menu.kategori";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $year);
@@ -52,7 +53,7 @@ if ($year > 0) {
 
     $output = fopen('php://output', 'w');
 
-    fputcsv($output, array('Menu', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des', 'Total'));
+    fputcsv($output, array('Menu', 'Category', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des', 'Total'));
 
     while ($row = $result->fetch_assoc()) {
         fputcsv($output, $row);
