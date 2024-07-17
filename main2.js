@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         Total: 0
                     };
 
+                    // Group data by category
+                    let groupedData = {
+                        Makanan: [],
+                        Minuman: []
+                    };
+
                     data.forEach(row => {
                         grandTotal.Jan += parseInt(row.Jan);
                         grandTotal.Feb += parseInt(row.Feb);
@@ -46,35 +52,56 @@ document.addEventListener('DOMContentLoaded', function () {
                         grandTotal.Des += parseInt(row.Des);
                         grandTotal.Total += parseInt(row.Total);
 
-                        const rowHTML = `
-                            <tr>
-                                <td>${row.menu}</td>
-                                <td>${row.category}</td>
-                                <td>${parseInt(row.Jan).toLocaleString()}</td>
-                                <td>${parseInt(row.Feb).toLocaleString()}</td>
-                                <td>${parseInt(row.Mar).toLocaleString()}</td>
-                                <td>${parseInt(row.Apr).toLocaleString()}</td>
-                                <td>${parseInt(row.Mei).toLocaleString()}</td>
-                                <td>${parseInt(row.Jun).toLocaleString()}</td>
-                                <td>${parseInt(row.Jul).toLocaleString()}</td>
-                                <td>${parseInt(row.Ags).toLocaleString()}</td>
-                                <td>${parseInt(row.Sep).toLocaleString()}</td>
-                                <td>${parseInt(row.Okt).toLocaleString()}</td>
-                                <td>${parseInt(row.Nov).toLocaleString()}</td>
-                                <td>${parseInt(row.Des).toLocaleString()}</td>
-                                <td>${parseInt(row.Total).toLocaleString()}</td>
+                        if (row.category === 'Makanan') {
+                            groupedData.Makanan.push(row);
+                        } else if (row.category === 'Minuman') {
+                            groupedData.Minuman.push(row);
+                        }
+                    });
+
+                    // Function to create rows for a category
+                    function createCategoryRows(category, rows) {
+                        let categoryHTML = `
+                            <tr class="category-header">
+                                <td colspan="15">${category}</td>
                             </tr>
                         `;
+                        rows.forEach(row => {
+                            categoryHTML += `
+                                <tr>
+                                    <td>${row.menu}</td>
+                                    <td>${parseInt(row.Jan).toLocaleString()}</td>
+                                    <td>${parseInt(row.Feb).toLocaleString()}</td>
+                                    <td>${parseInt(row.Mar).toLocaleString()}</td>
+                                    <td>${parseInt(row.Apr).toLocaleString()}</td>
+                                    <td>${parseInt(row.Mei).toLocaleString()}</td>
+                                    <td>${parseInt(row.Jun).toLocaleString()}</td>
+                                    <td>${parseInt(row.Jul).toLocaleString()}</td>
+                                    <td>${parseInt(row.Ags).toLocaleString()}</td>
+                                    <td>${parseInt(row.Sep).toLocaleString()}</td>
+                                    <td>${parseInt(row.Okt).toLocaleString()}</td>
+                                    <td>${parseInt(row.Nov).toLocaleString()}</td>
+                                    <td>${parseInt(row.Des).toLocaleString()}</td>
+                                    <td>${parseInt(row.Total).toLocaleString()}</td>
+                                </tr>
+                            `;
+                        });
+                        return categoryHTML;
+                    }
 
-                        tableBody.innerHTML += rowHTML;
-                    });
+                    // Add rows for Makanan and Minuman categories
+                    if (groupedData.Makanan.length > 0) {
+                        tableBody.innerHTML += createCategoryRows('Makanan', groupedData.Makanan);
+                    }
+                    if (groupedData.Minuman.length > 0) {
+                        tableBody.innerHTML += createCategoryRows('Minuman', groupedData.Minuman);
+                    }
 
                     // Add Grand Total row
                     const trTotal = document.createElement('tr');
                     trTotal.classList.add('total-row');
                     trTotal.innerHTML = `
                         <td>Grand Total</td>
-                        <td></td> <!-- Empty category column -->
                         <td>${grandTotal.Jan.toLocaleString()}</td>
                         <td>${grandTotal.Feb.toLocaleString()}</td>
                         <td>${grandTotal.Mar.toLocaleString()}</td>
