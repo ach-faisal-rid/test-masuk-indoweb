@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     const yearSelectElement = document.querySelector('#year-select');
-    const categorySelectElement = document.querySelector('#category-select');
     const downloadBtn = document.querySelector('#download-btn');
     const tableBody = document.querySelector('tbody');
     const reportYear = document.querySelector('#report-year');
 
-    function fetchSalesData(year, category) {
-        fetch(`http://localhost/smkti/test_masuk_indoweb/db.php?year=${year}&category=${category}`)
+    function fetchSalesData(year) {
+        fetch(`http://localhost/smkti/test_masuk_indoweb/db2.php?year=${year}`)
             .then(response => response.json())
             .then(data => {
                 tableBody.innerHTML = ''; // Clear existing rows
@@ -32,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         Total: 0
                     };
 
+                    // Variables to separate food and drinks
+                    let foodRows = '';
+                    let drinkRows = '';
+
                     data.forEach(row => {
                         grandTotal.Jan += parseInt(row.Jan);
                         grandTotal.Feb += parseInt(row.Feb);
@@ -47,25 +50,49 @@ document.addEventListener('DOMContentLoaded', function () {
                         grandTotal.Des += parseInt(row.Des);
                         grandTotal.Total += parseInt(row.Total);
 
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${row.menu}</td>
-                            <td>${parseInt(row.Jan).toLocaleString()}</td>
-                            <td>${parseInt(row.Feb).toLocaleString()}</td>
-                            <td>${parseInt(row.Mar).toLocaleString()}</td>
-                            <td>${parseInt(row.Apr).toLocaleString()}</td>
-                            <td>${parseInt(row.Mei).toLocaleString()}</td>
-                            <td>${parseInt(row.Jun).toLocaleString()}</td>
-                            <td>${parseInt(row.Jul).toLocaleString()}</td>
-                            <td>${parseInt(row.Ags).toLocaleString()}</td>
-                            <td>${parseInt(row.Sep).toLocaleString()}</td>
-                            <td>${parseInt(row.Okt).toLocaleString()}</td>
-                            <td>${parseInt(row.Nov).toLocaleString()}</td>
-                            <td>${parseInt(row.Des).toLocaleString()}</td>
-                            <td>${parseInt(row.Total).toLocaleString()}</td>
+                        const rowHTML = `
+                            <tr>
+                                <td>${row.menu}</td>
+                                <td>${parseInt(row.Jan).toLocaleString()}</td>
+                                <td>${parseInt(row.Feb).toLocaleString()}</td>
+                                <td>${parseInt(row.Mar).toLocaleString()}</td>
+                                <td>${parseInt(row.Apr).toLocaleString()}</td>
+                                <td>${parseInt(row.Mei).toLocaleString()}</td>
+                                <td>${parseInt(row.Jun).toLocaleString()}</td>
+                                <td>${parseInt(row.Jul).toLocaleString()}</td>
+                                <td>${parseInt(row.Ags).toLocaleString()}</td>
+                                <td>${parseInt(row.Sep).toLocaleString()}</td>
+                                <td>${parseInt(row.Okt).toLocaleString()}</td>
+                                <td>${parseInt(row.Nov).toLocaleString()}</td>
+                                <td>${parseInt(row.Des).toLocaleString()}</td>
+                                <td>${parseInt(row.Total).toLocaleString()}</td>
+                            </tr>
                         `;
-                        tableBody.appendChild(tr);
+
+                        if (row.category === 'Food') {
+                            foodRows += rowHTML;
+                        } else if (row.category === 'Drink') {
+                            drinkRows += rowHTML;
+                        }
                     });
+
+                    // Insert rows into the table with category headers
+                    if (foodRows) {
+                        tableBody.innerHTML += `
+                            <tr class="category-header">
+                                <td colspan="14">Food</td>
+                            </tr>
+                            ${foodRows}
+                        `;
+                    }
+                    if (drinkRows) {
+                        tableBody.innerHTML += `
+                            <tr class="category-header">
+                                <td colspan="14">Drink</td>
+                            </tr>
+                            ${drinkRows}
+                        `;
+                    }
 
                     // Add Grand Total row
                     const trTotal = document.createElement('tr');
@@ -103,21 +130,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateReport() {
         const year = yearSelectElement.value;
-        const category = categorySelectElement.value;
         reportYear.textContent = year;
-        fetchSalesData(year, category);
+        fetchSalesData(year);
     }
 
     function downloadData() {
         const year = yearSelectElement.value;
-        const category = categorySelectElement.value;
-        window.location.href = `http://localhost/smkti/test_masuk_indoweb/export.php?year=${year}&category=${category}`;
+        window.location.href = `http://localhost/smkti/test_masuk_indoweb/export2.php?year=${year}`;
     }
 
-    yearSelectElement.addEventListener('change', updateReport);
-    categorySelectElement.addEventListener('change', updateReport);
+    yearSelectElement.addEventListener('click', updateReport);
     downloadBtn.addEventListener('click', downloadData);
 
-    // Fetch initial data for the default year and category
+    // Fetch initial data for the default year
     updateReport();
 });

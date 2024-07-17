@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     tableBody.appendChild(tr);
                 }
             })
-            .catch(error => console.error('Error fetching sales data:', error));
+            .catch(error => console.error('Error fetching sales data:', error)
+        );
     }
 
     selectElement.addEventListener('change', function () {
