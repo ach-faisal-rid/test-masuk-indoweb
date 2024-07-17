@@ -1,59 +1,60 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
+header('Access-Control-Allow-Origin: *'); // Allow all origins
+header('Content-Type: application/json');
 
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "root"; // Your MySQL password
 $dbname = "test_penjualan";
 
-// Buat koneksi
+// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Periksa koneksi
+// Check connection
 if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
-$year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
+$year = $_GET['year'];
 
-// Prepare statement
-$sql = "SELECT m.menu, 
-              SUM(CASE WHEN MONTH(p.tanggal) = 1 THEN pd.jumlah ELSE 0 END) AS jan,
-              SUM(CASE WHEN MONTH(p.tanggal) = 2 THEN pd.jumlah ELSE 0 END) AS feb,
-              SUM(CASE WHEN MONTH(p.tanggal) = 3 THEN pd.jumlah ELSE 0 END) AS mar,
-              SUM(CASE WHEN MONTH(p.tanggal) = 4 THEN pd.jumlah ELSE 0 END) AS apr,
-              SUM(CASE WHEN MONTH(p.tanggal) = 5 THEN pd.jumlah ELSE 0 END) AS mei,
-              SUM(CASE WHEN MONTH(p.tanggal) = 6 THEN pd.jumlah ELSE 0 END) AS jun,
-              SUM(CASE WHEN MONTH(p.tanggal) = 7 THEN pd.jumlah ELSE 0 END) AS jul,
-              SUM(CASE WHEN MONTH(p.tanggal) = 8 THEN pd.jumlah ELSE 0 END) AS ags,
-              SUM(CASE WHEN MONTH(p.tanggal) = 9 THEN pd.jumlah ELSE 0 END) AS sep,
-              SUM(CASE WHEN MONTH(p.tanggal) = 10 THEN pd.jumlah ELSE 0 END) AS okt,
-              SUM(CASE WHEN MONTH(p.tanggal) = 11 THEN pd.jumlah ELSE 0 END) AS nov,
-              SUM(CASE WHEN MONTH(p.tanggal) = 12 THEN pd.jumlah ELSE 0 END) AS des,
-              SUM(pd.jumlah) AS total_sales_year
-        FROM t_pesanan p
-        JOIN t_pesanan_detail pd ON p.id = pd.id_pesanan
-        JOIN m_menu m ON pd.id_menu = m.id
-        WHERE YEAR(p.tanggal) = ?
-        GROUP BY m.menu";
+$sql = "
+    SELECT 
+        m_menu.nama AS menu,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 1 THEN t_pesanan_detail.total ELSE 0 END) AS Jan,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 2 THEN t_pesanan_detail.total ELSE 0 END) AS Feb,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 3 THEN t_pesanan_detail.total ELSE 0 END) AS Mar,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 4 THEN t_pesanan_detail.total ELSE 0 END) AS Apr,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 5 THEN t_pesanan_detail.total ELSE 0 END) AS Mei,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 6 THEN t_pesanan_detail.total ELSE 0 END) AS Jun,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 7 THEN t_pesanan_detail.total ELSE 0 END) AS Jul,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 8 THEN t_pesanan_detail.total ELSE 0 END) AS Ags,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 9 THEN t_pesanan_detail.total ELSE 0 END) AS Sep,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 10 THEN t_pesanan_detail.total ELSE 0 END) AS Okt,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 11 THEN t_pesanan_detail.total ELSE 0 END) AS Nov,
+        SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 12 THEN t_pesanan_detail.total ELSE 0 END) AS Des,
+        SUM(t_pesanan_detail.total) AS Total
+    FROM 
+        t_pesanan_detail
+    JOIN 
+        t_pesanan ON t_pesanan_detail.t_pesanan_id = t_pesanan.id
+    JOIN 
+        m_menu ON t_pesanan_detail.m_menu_id = m_menu.id
+    WHERE 
+        YEAR(t_pesanan.tanggal) = ?
+    GROUP BY 
+        m_menu.id
+";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $year);
+$stmt->bind_param("i", $year);
 $stmt->execute();
-
 $result = $stmt->get_result();
 
-$data = array();
-if ($result->num_rows > 0) {
-  while($row = $result->fetch_assoc()) {
-    $data[] = $row;
-  }
-} else {
-  $data["message"] = "No records found";
+$sales_data = array();
+while ($row = $result->fetch_assoc()) {
+    $sales_data[] = $row;
 }
 
-echo json_encode($data);
+echo json_encode($sales_data);
 
-$stmt->close();
 $conn->close();

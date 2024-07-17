@@ -1,7 +1,10 @@
 <?php
+header('Access-Control-Allow-Origin: *'); // Allow all origins
+header('Content-Type: application/json');
+
 $servername = "localhost";
 $username = "root";
-$password = "root"; // ini yang memakai password, root
+$password = "root"; // or your password
 $dbname = "test_penjualan";
 
 // Create connection
@@ -11,10 +14,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     echo json_encode(['error' => 'Connection failed: ' . $conn->connect_error]);
     exit();
-    // echo "<p style='color: red;'>Error: Connection failed! " . $conn->connect_error . "</p>";
-} // else {
-//  echo "<p style='color: green;'>Database connection established successfully! You can now perform database operations.</p>";
-// }
+}
 
 $year = isset($_GET['year']) ? (int)$_GET['year'] : 0;
 $category = isset($_GET['category']) ? $_GET['category'] : 'all';
@@ -22,7 +22,8 @@ $category = isset($_GET['category']) ? $_GET['category'] : 'all';
 if ($year > 0) {
     $sql = "
         SELECT 
-            m_menu.nama AS menu,
+        m_menu.nama AS menu,
+        m_menu.kategori AS type,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 1 THEN t_pesanan_detail.total ELSE 0 END) AS Jan,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 2 THEN t_pesanan_detail.total ELSE 0 END) AS Feb,
             SUM(CASE WHEN MONTH(t_pesanan.tanggal) = 3 THEN t_pesanan_detail.total ELSE 0 END) AS Mar,

@@ -1,34 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Penjualan Tahunan</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-
     <div class="container">
-        <div class="report-section">
-            <h2>Laporan Penjualan Tahunan</h2>
-            <form action="#formTahun">
-                <label for="tahun">Tahun:</label>
-                <select name="tahun" id="tahun">
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
-                </select>
-            </form>
-            <button id="tampilkan">Tampilkan</button>
-            <button id="downloadDatabase">Download Database</button>
+        <h1>Laporan Penjualan Tahunan</h1>
+        <div class="controls">
+            <select id="year-select">
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+            </select>
+            <button class="btn show-btn">Tampilkan</button>
+            <button class="btn download-btn">Download Database</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="14" style="text-align:center;">
+                            Laporan Penjualan Periode <span id="report-year">2019</span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Menu</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>Mei</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Ags</th>
+                        <th>Sep</th>
+                        <th>Okt</th>
+                        <th>Nov</th>
+                        <th>Des</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be dynamically inserted here -->
+                </tbody>
+            </table>
         </div>
     </div>
-
-
-    <script src="main.js"></script>
-    
+    <script src="script.js"></script>
 </body>
-
 </html>
