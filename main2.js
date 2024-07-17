@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     function createCategoryRows(category, rows) {
                         let categoryHTML = `
                             <tr class="category-header">
-                                <td colspan="15">${category}</td>
+                                <td colspan="14">${category}</td>
                             </tr>
                         `;
                         rows.forEach(row => {
